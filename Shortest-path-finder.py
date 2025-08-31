@@ -22,7 +22,10 @@ current_index = 5
 
 # Visited positions
 visited_positions = []
+visited_counter = 0
 
+#Exit_options
+tracked_exits_list = []
 
 
 # Search for empty position
@@ -36,9 +39,10 @@ def search_for_empty_position(current_row, current_pos):
 
     # Fix O search later and moving to visited pos
     try:
-        # Same row
+        # Current row
         if maze[current_row][min_pos] != "#" and [current_row, min_pos] not in visited_positions:
             visited_positions.append([current_row, min_pos])
+            track_exits(current_row, min_row, max_row, current_pos, min_pos, max_pos)
             move_to_position(current_row, min_pos, current_row, current_pos)
             return
         elif maze[current_row][max_pos] != "#" and [current_row, max_pos] not in visited_positions:
@@ -59,6 +63,8 @@ def search_for_empty_position(current_row, current_pos):
             return
         
         else:
+            visited_positions.append([current_row, current_pos])
+            move_to_position()
             return
     except:
         return
@@ -66,18 +72,41 @@ def search_for_empty_position(current_row, current_pos):
 
 def move_to_position(row, pos, oldrow, oldpos):
     global current_row, current_index    
-            
+    
+
+
     maze[row][pos] = "X"
     maze[oldrow][oldpos] = " "
     
     current_row = row
     current_index = pos
-    time.sleep(3)
+    time.sleep(1)
     print("")
     for row in maze:
         print(row)
         
+
+def track_exits(current_row, min_row, max_row, current_pos, min_pos, max_pos,):
+        
+        # Current row
+        if maze[current_row][min_pos] != "#" and [current_row, min_pos] not in visited_positions:
+            tracked_exits_list.append([current_row, current_pos])   
+        if maze[current_row][max_pos] != "#" and [current_row, max_pos] not in visited_positions:
+            tracked_exits_list.append([current_row, current_pos])
+            
+        # Lower Row
+        if maze[min_row][current_pos] != "#" and [min_row, current_pos] not in visited_positions:
+            tracked_exits_list.append([current_row, current_pos])
+            
+        # Upper Row
+        if maze[max_row][current_pos] != "#" and [max_row, current_pos] not in visited_positions:
+            tracked_exits_list.append([current_row, current_pos])
+        
+        print(tracked_exits_list)
+        return
     
+
+
 
 if __name__ == "__main__":
     for row in maze:
