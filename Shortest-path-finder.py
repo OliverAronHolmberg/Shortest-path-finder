@@ -26,7 +26,7 @@ visited_counter = 0
 
 #Exit_options
 tracked_exits_list = []
-
+temporary_visited_list = []
 
 # Search for empty position
 def search_for_empty_position(current_row, current_pos):
@@ -64,7 +64,7 @@ def search_for_empty_position(current_row, current_pos):
         
         else:
             visited_positions.append([current_row, current_pos])
-            move_to_position()
+            search_for_visited_position(current_row, min_row, max_row, current_pos, min_pos, max_pos)
             return
     except:
         return
@@ -90,22 +90,67 @@ def track_exits(current_row, min_row, max_row, current_pos, min_pos, max_pos,):
         
         # Current row
         if maze[current_row][min_pos] != "#" and [current_row, min_pos] not in visited_positions:
-            tracked_exits_list.append([current_row, current_pos])   
+            tracked_exits_list.append([current_row, min_pos])   
         if maze[current_row][max_pos] != "#" and [current_row, max_pos] not in visited_positions:
-            tracked_exits_list.append([current_row, current_pos])
+            tracked_exits_list.append([current_row, max_pos])
             
         # Lower Row
         if maze[min_row][current_pos] != "#" and [min_row, current_pos] not in visited_positions:
-            tracked_exits_list.append([current_row, current_pos])
+            tracked_exits_list.append([min_row, current_pos])
             
         # Upper Row
         if maze[max_row][current_pos] != "#" and [max_row, current_pos] not in visited_positions:
-            tracked_exits_list.append([current_row, current_pos])
+            tracked_exits_list.append([max_row, current_pos])
         
-        print(tracked_exits_list)
-        return
+        else:
+            return
     
 
+def search_for_visited_position(current_row, min_row, max_row, current_pos, min_pos, max_pos):
+    
+    
+    if [current_row, current_pos] not in tracked_exits_list:
+        # Current Row
+        if maze[current_row][min_pos] != "#" and [current_row, min_pos] not in temporary_visited_list:
+            temporary_visited_list.append([current_row, min_pos])
+            move_to_visited_position(current_row, min_pos, current_row, current_pos)
+            return
+        elif maze[current_row][max_pos] != "#" and [current_row, max_pos] not in temporary_visited_list:
+            temporary_visited_list.append([current_row, max_pos])
+            move_to_visited_position(current_row, max_pos, current_row, current_pos)
+            return
+        
+        #Lower Row
+        elif maze[min_row][current_pos] != "#" and [min_row, current_pos] not in temporary_visited_list:
+            temporary_visited_list.append([min_row, current_pos])
+            move_to_visited_position(min_row, current_pos, current_row, current_pos)
+            return
+
+        #Upper Row
+        elif maze[max_row][current_pos] != "#" and [max_row, current_pos] not in temporary_visited_list:
+            temporary_visited_list.append([max_row, current_pos])
+            move_to_visited_position(max_row, current_pos, max_row, current_pos)
+            return
+
+    else:
+        temporary_visited_list.clear()
+        search_for_empty_position(current_row, current_pos)
+        return
+
+def move_to_visited_position(row, pos, oldrow, oldpos):
+    global current_row, current_index    
+    
+
+
+    maze[row][pos] = "X"
+    maze[oldrow][oldpos] = " "
+    
+    current_row = row
+    current_index = pos
+    time.sleep(1)
+    print("")
+    for row in maze:
+        print(row)
 
 
 if __name__ == "__main__":
